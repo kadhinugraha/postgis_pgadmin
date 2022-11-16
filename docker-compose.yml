@@ -1,0 +1,45 @@
+# docker-compose build
+# configured for CSE3DMS - Database Management System
+# La Trobe University
+# Created by Kiki Adhinugraha
+
+# how to use:
+# make sure you have Docker or Docker Desktop installed
+# remove "postgis_" from the filename. Make sure the file name is "docker-compose.yml"
+# Open the folder that contains docker-compose.yml
+# run C:\> docker-compose up
+
+version: '2.0'
+
+services:
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user@domain.com
+      - PGADMIN_DEFAULT_PASSWORD=password
+      - PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION=True
+      - PGADMIN_CONFIG_LOGIN_BANNER="Authorised users in CSE3DMS only!"
+      - PGADMIN_CONFIG_CONSOLE_LOG_LEVEL=10
+    ports:
+      - "80:80"
+    links:
+      - db      
+  db:
+    build: db
+    environment:
+      #your configuration
+      - POSTGRES_DB=gisdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - ALLOW_IP_RANGE=0.0.0.0/0
+      # Add postgis extension
+      - POSTGRES_MULTIPLE_EXTENSIONS=postgis
+    ports:
+      - "5430:5432"
+    restart: on-failure
+    volumes:
+      - "postgisdb:/var/lib/postgresql/data"
+      - "C:/Users/kadhinugraha/Dropbox/Kiki-PostDoc/Task 00 - Lecture/Subject Development/tools/postgis:/home"
+volumes:
+  postgisdb:
+    external: false
